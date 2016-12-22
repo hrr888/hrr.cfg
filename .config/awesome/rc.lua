@@ -10,11 +10,10 @@ local beautiful = require("beautiful")
 -- Notification library
 local naughty = require("naughty")
 local menubar = require("menubar")
--- local tyrannical = require("tyrannical")
--- require ("eminent")
-
+require("eminent")
 -- Load Debian menu entries
 require("debian.menu")
+local cal = require("cal")
 
 -- {{{ Error handling
 -- Check if awesome encountered an error during startup and fell back to
@@ -89,6 +88,7 @@ tags = {}
 for s = 1, screen.count() do
      -- Each screen has its own tag table.
      tags[s] = awful.tag({ "local", "www" }, s, {layouts[1], layouts[3]})
+--    tags[s] = awful.tag({ 1, 2, 3, 4, 5, "6:vms", "7:jump", "8:local", "9:www" }, s, {layouts[1], layouts[1], layouts[1], layouts[1], layouts[1], layouts[1], layouts[1], layouts[1], layouts[3]})
 end
 -- }}}
 
@@ -143,7 +143,9 @@ menubar.utils.terminal = terminal -- Set the terminal for applications that requ
 
 -- {{{ Wibox
 -- Create a textclock widget
-mytextclock = awful.widget.textclock("%Y %d%m %a %H%M")
+mytextclock = awful.widget.textclock("%Y %m%d %a %H%M")
+-- add calendar tooltip to textclock
+cal.register(mytextclock, "<b>%s</b>")
 
 -- Create a wibox for each screen and add it
 mywibox = {}
@@ -185,7 +187,7 @@ mytasklist.buttons = awful.util.table.join(
                                                   instance:hide()
                                                   instance = nil
                                               else
-                                                  instance = awful.menu.clients({ width=400 })
+                                                  instance = awful.menu.clients({ theme ={ width=400 }})
                                               end
                                           end),
                      awful.button({ }, 4, function ()
@@ -226,9 +228,7 @@ for s = 1, screen.count() do
 
     -- Widgets that are aligned to the right
     local right_layout = wibox.layout.fixed.horizontal()
-    if s == 1 then
-	    right_layout:add(wibox.widget.systray())
-    end
+    if s == 1 then right_layout:add(wibox.widget.systray()) end
     right_layout:add(mytextclock)
 
     -- Now bring it all together (with the tasklist in the middle)
@@ -303,6 +303,7 @@ globalkeys = awful.util.table.join(
     	    function ()
 	    	awful.util.spawn("dmenu_run -i -nb '" ..
 	    		beautiful.bg_normal ..
+			"' -fn 'sans 10" ..
 			"' -nf '" .. beautiful.fg_normal ..
 			"' -sb '" .. beautiful.bg_focus .. 
 			"' -sf '" .. beautiful.fg_focus .. "'")
@@ -315,6 +316,8 @@ globalkeys = awful.util.table.join(
 			"' -sb '" .. beautiful.bg_focus .. 
 			"' -sf '" .. beautiful.fg_focus .. "'")
 	    end),
+		awful.key({ modkey }, "Print", function() awful.util.spawn("mate-screenshot --area -i") end),
+
     awful.key({ modkey }, "x",
               function ()
                   awful.prompt.run({ prompt = "Run Lua code: " },
