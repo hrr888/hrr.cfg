@@ -5,6 +5,9 @@
 " * fugitive
 " * visual-star-seach
 " * matchit
+" * vim-dirdiff
+" * vim-airline
+" * vim-airline-themes
 execute pathogen#infect()
 syntax on
 filetype plugin indent on
