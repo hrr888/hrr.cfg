@@ -1,0 +1,9 @@
+#!/bin/bash
+hf=~/.hosts
+hn=$(awk -F, '{print $1, $2}' OFS='\n' $hf | sort -u | dmenu $*)
+[ -n "$hn" ] && {
+	ad=$(awk -F, '/\<'$hn'\>/{print $2}' $hf)
+	[ -z "$ad" ] && ad=$hn
+	TTERM=xterm urxvt -hold -title $hn -e ssh $ad
+	#TERM=xterm urxvt -hold -title $hn -e ssh -t jumphost ssh $ad
+}
